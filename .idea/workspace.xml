@@ -2,9 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="85d84a93-b3b3-471f-b8c2-ea4b93492644" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/states/Game.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/sprites/OtherPlayer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utils/PusherService.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sprites/Player.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/sprites/Player.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/states/Game.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/states/Game.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/states/Start.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/states/Start.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,23 +25,8 @@
       </list>
     </option>
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>mushroom</find>
-      <find>ammobag</find>
-      <find>add\.plugin</find>
-      <find>alert</find>
-      <find>leaderboard</find>
-      <find>devicerea</find>
-    </findStrings>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
-    <option name="width" value="1440" />
-    <option name="height" value="797" />
   </component>
   <component name="ProjectId" id="1U0MBe880CtIuUi5CzTrKnz4p7E" />
   <component name="ProjectLevelVcsManager">
@@ -44,7 +35,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/states" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/sprites" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="$PROJECT_DIR$/node_modules/eslint" />
@@ -56,11 +47,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/states" />
       <recent name="$PROJECT_DIR$/src/sprites" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/src/states" />
       <recent name="$PROJECT_DIR$/assets/images" />
       <recent name="$PROJECT_DIR$/src/services" />
-      <recent name="$PROJECT_DIR$/assets/audio" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -93,7 +84,7 @@
       <workItem from="1574488932668" duration="53000" />
       <workItem from="1577518735014" duration="596000" />
       <workItem from="1577519867834" duration="277000" />
-      <workItem from="1577520312810" duration="1770000" />
+      <workItem from="1577520312810" duration="14692000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1542620906214</created>

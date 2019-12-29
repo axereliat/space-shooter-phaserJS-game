@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import config from '../config'
+import {PusherService} from '../utils/PusherService';
 
 export default class extends Phaser.State {
   init () {
@@ -9,7 +10,7 @@ export default class extends Phaser.State {
     this.background = this.game.add.tileSprite(0, 0, 800, 600, 'background')
     const title = this.game.add.sprite(this.world.centerX - 320, 50, 'title')
     title.scale.set(0.8, 0.8)
-    const authorText = this.game.add.text(this.world.centerX, config.gameHeight - 20, 'Made by Mario Markov, 2018', { font: '24px Arial', fill: '#dddddd', align: 'center' })
+    const authorText = this.game.add.text(this.world.centerX, config.gameHeight - 20, 'Made by Mario Markov, 2020', { font: '24px Arial', fill: '#dddddd', align: 'center' })
     authorText.anchor.setTo(0.5, 0.5)
     this.game.add.button(this.game.world.centerX - 140, this.world.centerY, 'startBtn', () => {
       this.state.start('Game')
@@ -19,5 +20,12 @@ export default class extends Phaser.State {
   }
 
   create () {
+    PusherService.shipMoved(100)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err)
+      });
   }
 }

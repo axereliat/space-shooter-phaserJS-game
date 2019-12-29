@@ -27,7 +27,7 @@
 <h3>Click on the game canvas to enter fullscreen mode</h3>
 <!-- uncomment the line bellow for cordova feature -->
 <script type="text/javascript" src="cordova.js"></script>
-<footer>Made by Mario Markov &copy; 2018</footer>
+<footer>Made by Mario Markov &copy; 2020</footer>
 <div id="scoreForm" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -65,6 +65,7 @@
     </div>
 </div>
 
+<script src="https://js.pusher.com/5.0/pusher.min.js"></script>
 <script
         src="https://code.jquery.com/jquery-3.3.1.min.js"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -76,6 +77,7 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 <script>
+
   function updateHighScore (username, score) {
     $.ajax({
       url: 'https://us-central1-space-shooter-scores-1.cloudfunctions.net/listScores/',
@@ -134,6 +136,16 @@
   (function ($) {
     'use strict'
     $(function () {
+      var pusher = new Pusher('a2cc80fe5bb42c3481df', {
+        cluster: 'eu',
+        forceTLS: true
+      })
+
+      window.pusher = pusher;
+
+      console.log('PUSHERRRR: ', window.pusher);
+
+
       $('#scoreForm').modal({
         backdrop: 'static',
         keyboard: false

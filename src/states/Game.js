@@ -1,6 +1,7 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
+import OtherPlayer from '../sprites/OtherPlayer'
 
 export default class extends Phaser.State {
   init () {
@@ -22,11 +23,19 @@ export default class extends Phaser.State {
       y: this.world.bounds.bottom - 30,
       asset: 'player'
     })
+    this.otherPlayer = new OtherPlayer({
+      game: this.game,
+      x: this.world.centerX + 30,
+      y: this.world.bounds.bottom - 30,
+      asset: 'player'
+    })
     this.game.physics.arcade.enable(this.player)
     this.player.physicsType = Phaser.Physics.ARCADE
 
     this.player.scale.set(0.2, 0.2)
+    this.otherPlayer.scale.set(0.2, 0.2)
     this.game.add.existing(this.player)
+    this.game.add.existing(this.otherPlayer)
     this.fireButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 
     this.game.input.onDown.add(this.gofull, this)
