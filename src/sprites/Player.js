@@ -1,6 +1,5 @@
 import Phaser from 'phaser'
 import config from '../config'
-import {PusherService} from '../utils/PusherService'
 
 export default class extends Phaser.Sprite {
   constructor ({game, x, y, asset}, multiplayer) {
