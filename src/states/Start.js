@@ -6,7 +6,7 @@ export default class extends Phaser.State {
   }
 
   preload () {
-    this.background = this.game.add.tileSprite(0, 0, 800, 600, 'background')
+    this.background = this.game.add.tileSprite(0, 0, config.gameWidth, config.gameHeight, 'background')
     const title = this.game.add.sprite(this.world.centerX - 320, 50, 'title')
     title.scale.set(0.8, 0.8)
     const authorText = this.game.add.text(this.world.centerX, config.gameHeight - 20, 'Made by Mario Markov, 2020', { font: '24px Arial', fill: '#dddddd', align: 'center' })

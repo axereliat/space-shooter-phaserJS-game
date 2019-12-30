@@ -8,8 +8,7 @@ export default class extends Phaser.Sprite {
     this.leftArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT)
     this.rightArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT)
     this.speed = 3
-    this.multiplayer = multiplayer
-    this.oldX = null;
+    this.oldX = null
 
     this.channel = window.pusher.subscribe('private-my-channel')
   }

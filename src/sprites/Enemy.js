@@ -8,7 +8,6 @@ export default class extends Phaser.Sprite {
 
     const channel = window.pusher.subscribe('private-my-channel')
     channel.bind('client-ship-moved', data => {
-      console.log('WE are moving');
       if (data.nickname !== localStorage.getItem('username')) {
         this.position.x = data.x
       }

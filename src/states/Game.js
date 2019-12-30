@@ -2,8 +2,12 @@
 import Phaser from 'phaser'
 import Player from '../sprites/Player'
 import Enemy from '../sprites/Enemy'
+import config from '../config'
 
 export default class extends Phaser.State {
+  constructor () {
+    super()
+  }
   init () {
   }
 
@@ -13,23 +17,36 @@ export default class extends Phaser.State {
   create () {
     this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT
 
-    this.lives = 5
-    this.score = 0
-
     this.painAudio = this.game.add.audio('pain')
     this.shotAudio = this.game.add.audio('shot')
 
-    this.background = this.game.add.tileSprite(0, 0, 800, 600, 'background')
+    this.background = this.game.add.tileSprite(0, 0, config.gameWidth, config.gameHeight, 'background')
+
+    // this.game.add.text(this.world.centerX, config.gameHeight - 20, localStorage.getItem('username'), { font: '24px Arial', fill: '#dddddd', align: 'center' })
+
+    this.playerLivesScale = 0.5
+    this.enemyLivesScale = 0.5
+
+    this.playerHealthBar = this.game.add.image(0, config.gameHeight - 20,'green')
+    this.playerHealthBar.scale.set(this.playerLivesScale, 1)
+    this.playerHealthBar.bringToTop()
+
+    this.enemyHealthBar = this.game.add.image(0, -config.gameHeight - 460,'green')
+    this.enemyHealthBar.scale.set(this.enemyLivesScale, 1)
+    this.enemyHealthBar.bringToTop()
+
+    this.livesDecrement = 0.05
+
     this.player = new Player({
       game: this.game,
       x: this.world.centerX,
-      y: this.world.bounds.bottom - 30,
+      y: this.world.bounds.bottom - 60,
       asset: 'player'
     }, true)
     this.enemy = new Enemy({
       game: this.game,
       x: this.world.centerX + 30,
-      y: this.world.bounds.top + 30,
+      y: this.world.bounds.top + 60,
       asset: 'enemy'
     })
     this.game.physics.arcade.enable(this.player)
@@ -79,9 +96,25 @@ export default class extends Phaser.State {
     this.game.input.onDown.add(this.gofull, this)
   }
 
-  bulletAndShipCollisionHandler (ship, bullet) {
+  bulletAndPlayerCollisionHandler (player, bullet) {
     bullet.kill()
 
+    this.playerLivesScale -= this.livesDecrement
+    this.playerHealthBar.scale.set(this.playerLivesScale, 1)
+
+    this.initiateExplosion(player)
+  }
+
+  bulletAndEnemyCollisionHandler (enemy, bullet) {
+    bullet.kill()
+
+    this.enemyLivesScale -= this.livesDecrement;
+    this.enemyHealthBar.scale.set(this.enemyLivesScale, 1)
+
+    this.initiateExplosion(enemy)
+  }
+
+  initiateExplosion(ship) {
     this.painAudio.play()
     const explosion = this.explosions.getFirstExists(false)
     explosion.scale.set(1.2, 1.2)
@@ -97,8 +130,8 @@ export default class extends Phaser.State {
       this.fireBullet()
     }
 
-    this.game.physics.arcade.overlap(this.bullets, this.enemy, this.bulletAndShipCollisionHandler, null, this)
-    this.game.physics.arcade.overlap(this.bullets, this.player, this.bulletAndShipCollisionHandler, null, this)
+    this.game.physics.arcade.overlap(this.bullets, this.player, this.bulletAndPlayerCollisionHandler, null, this)
+    this.game.physics.arcade.overlap(this.bullets, this.enemy, this.bulletAndEnemyCollisionHandler, null, this)
   }
 
   gofull () {
