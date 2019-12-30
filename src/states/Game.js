@@ -16,6 +16,9 @@ export default class extends Phaser.State {
     this.lives = 5
     this.score = 0
 
+    this.painAudio = this.game.add.audio('pain')
+    this.shotAudio = this.game.add.audio('shot')
+
     this.background = this.game.add.tileSprite(0, 0, 800, 600, 'background')
     this.player = new Player({
       game: this.game,
@@ -38,7 +41,42 @@ export default class extends Phaser.State {
     this.game.add.existing(this.otherPlayer)
     this.fireButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 
+    this.fireRate = 350
+    this.bulletTime = 0
+    this.bullets = this.game.add.group()
+    this.bullets.enableBody = true
+    this.bullets.physicsBodyType = Phaser.Physics.ARCADE
+    this.bullets.createMultiple(50, 'bullet')
+    this.bullets.setAll('anchor.x', 0.5)
+    this.bullets.setAll('anchor.y', 1)
+    this.bullets.setAll('outOfBoundsKill', true)
+    this.bullets.setAll('checkWorldBounds', true)
+
+    this.channel = window.pusher.subscribe('private-my-channel')
+
+    this.channel.bind('client-fire-bullet', data => {
+      if (data.nickname !== localStorage.getItem('username')) {
+        const bulletArr = []
+        this.bullets.forEachDead(bullet => {
+          bulletArr.push(bullet)
+        })
+        const bullet = bulletArr[0]
+        if (bullet) {
+          this.shotAudio.play()
+          bullet.reset(this.otherPlayer.x, this.otherPlayer.y + 15)
+          bullet.body.velocity.y = 400
+          bullet.angle = 0
+        }
+      }
+    })
+
     this.game.input.onDown.add(this.gofull, this)
+  }
+
+  update () {
+    if (this.fireButton.isDown) {
+      this.fireBullet()
+    }
   }
 
   gofull () {
@@ -46,6 +84,27 @@ export default class extends Phaser.State {
       this.game.scale.stopFullScreen()
     } else {
       this.game.scale.startFullScreen(false)
+    }
+  }
+
+  fireBullet () {
+    const bulletArr = []
+    this.bullets.forEachDead(bullet => {
+      bulletArr.push(bullet)
+    })
+    const bullet = bulletArr[0]
+    if (bullet) {
+      if (this.game.time.now > this.bulletTime) {
+        this.channel.trigger('client-fire-bullet', {
+          x: bullet.position.x,
+          nickname: localStorage.getItem('username')
+        })
+        this.shotAudio.play()
+        bullet.reset(this.player.x, this.player.y - 15)
+        bullet.body.velocity.y = -400
+        bullet.angle = 0
+        this.bulletTime = this.game.time.now + this.fireRate
+      }
     }
   }
 

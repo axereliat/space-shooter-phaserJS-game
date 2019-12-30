@@ -11,6 +11,8 @@ export default class extends Phaser.Sprite {
     this.speed = 3
     this.multiplayer = multiplayer
     this.oldX = null;
+
+    this.channel = window.pusher.subscribe('private-my-channel')
   }
 
   update () {
@@ -23,21 +25,10 @@ export default class extends Phaser.Sprite {
       this.position.x += this.speed
     }
     if (isMoving) {
-      /* const result = PusherService.shipMoved(this.position.x, localStorage.getItem('username'))
-      if (result !== null) {
-        result
-          .then(res => {
-            console.log(res)
-          })
-          .catch(err => {
-            console.log(err)
-          })
-      } */
-      const channel = window.pusher.subscribe('private-my-channel')
-      if (this.oldX === null || Math.abs(this.oldX - this.position.x) > 10) {
+      if (this.oldX === null || Math.abs(this.oldX - this.position.x) > 15) {
         this.oldX = this.position.x;
 
-        channel.trigger('client-ship-moved', {
+        this.channel.trigger('client-ship-moved', {
           x: this.position.x,
           nickname: localStorage.getItem('username')
         })
