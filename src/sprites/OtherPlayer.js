@@ -9,17 +9,8 @@ export default class extends Phaser.Sprite {
   }
 
   update () {
-    // const pusher = new Pusher('a2cc80fe5bb42c3481df', {
-    //   appId: '924080',
-    //   key: 'a2cc80fe5bb42c3481df',
-    //   secret: 'c3e604f1cf75d48adf04',
-    //   cluster: 'eu',
-    //   encrypted: true
-    // })
-
-    const channel = window.pusher.subscribe('my-channel')
-    channel.bind('ship-moved', data => {
-      console.log('mario hereeeeeeee: ', data)
+    const channel = window.pusher.subscribe('private-my-channel')
+    channel.bind('client-ship-moved', data => {
       if (data.nickname !== localStorage.getItem('username')) {
         this.position.x = data.x
       }

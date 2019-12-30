@@ -3,12 +3,14 @@ import config from '../config'
 import {PusherService} from '../utils/PusherService'
 
 export default class extends Phaser.Sprite {
-  constructor ({game, x, y, asset}) {
+  constructor ({game, x, y, asset}, multiplayer) {
     super(game, x, y, asset)
     this.anchor.setTo(0.5)
     this.leftArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT)
     this.rightArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT)
     this.speed = 3
+    this.multiplayer = multiplayer
+    this.oldX = null;
   }
 
   update () {
@@ -21,7 +23,7 @@ export default class extends Phaser.Sprite {
       this.position.x += this.speed
     }
     if (isMoving) {
-      const result = PusherService.shipMoved(this.position.x, localStorage.getItem('username'))
+      /* const result = PusherService.shipMoved(this.position.x, localStorage.getItem('username'))
       if (result !== null) {
         result
           .then(res => {
@@ -30,6 +32,15 @@ export default class extends Phaser.Sprite {
           .catch(err => {
             console.log(err)
           })
+      } */
+      const channel = window.pusher.subscribe('private-my-channel')
+      if (this.oldX === null || Math.abs(this.oldX - this.position.x) > 10) {
+        this.oldX = this.position.x;
+
+        channel.trigger('client-ship-moved', {
+          x: this.position.x,
+          nickname: localStorage.getItem('username')
+        })
       }
     }
     this.checkWorldBounds()

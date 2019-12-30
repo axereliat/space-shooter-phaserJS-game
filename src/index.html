@@ -138,13 +138,11 @@
     $(function () {
       var pusher = new Pusher('a2cc80fe5bb42c3481df', {
         cluster: 'eu',
-        forceTLS: true
-      })
+        forceTLS: true,
+        authEndpoint: 'http://localhost:8000/pusher/auth'
+      });
 
       window.pusher = pusher;
-
-      console.log('PUSHERRRR: ', window.pusher);
-
 
       $('#scoreForm').modal({
         backdrop: 'static',

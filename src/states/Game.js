@@ -22,18 +22,18 @@ export default class extends Phaser.State {
       x: this.world.centerX,
       y: this.world.bounds.bottom - 30,
       asset: 'player'
-    })
+    }, true)
     this.otherPlayer = new OtherPlayer({
       game: this.game,
       x: this.world.centerX + 30,
-      y: this.world.bounds.bottom - 30,
-      asset: 'player'
+      y: this.world.bounds.top + 30,
+      asset: 'enemy'
     })
     this.game.physics.arcade.enable(this.player)
     this.player.physicsType = Phaser.Physics.ARCADE
 
     this.player.scale.set(0.2, 0.2)
-    this.otherPlayer.scale.set(0.2, 0.2)
+    this.otherPlayer.scale.set(0.2, -0.2)
     this.game.add.existing(this.player)
     this.game.add.existing(this.otherPlayer)
     this.fireButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)

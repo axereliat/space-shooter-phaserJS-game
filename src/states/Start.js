@@ -20,12 +20,5 @@ export default class extends Phaser.State {
   }
 
   create () {
-    PusherService.shipMoved(100)
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err)
-      });
   }
 }
