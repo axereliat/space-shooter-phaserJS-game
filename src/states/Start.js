@@ -6,6 +6,8 @@ export default class extends Phaser.State {
   }
 
   preload () {
+    window.gameState = this.state
+
     this.background = this.game.add.tileSprite(0, 0, config.gameWidth, config.gameHeight, 'background')
     const title = this.game.add.sprite(this.world.centerX - 320, 50, 'title')
     title.scale.set(0.8, 0.8)
@@ -19,12 +21,14 @@ export default class extends Phaser.State {
 
     this.game.add.button(this.game.world.centerX - 140, this.world.centerY + 80, 'createGameBtn', () => {
       $('#waitingModal').modal('show')
+      $('#waitingModalBody').html('<p>Waiting for someone to join your game...</p>')
       const channelName = 'private-' + localStorage.getItem('username')
       const channel = window.pusher.subscribe(channelName)
       channel.bind('client-connected', data => {
-        console.log('here ' + JSON.stringify(data))
-        $('#waitingModalBody').html('<p>' + localStorage.getItem('username') + ' joined! The game starts in 3 seconds.</p>')
+        window.enemyName = data.nickname
+        $('#waitingModalBody').html('<p>' + data.nickname + ' joined! The game starts in 3 seconds.</p>')
         setTimeout(() => {
+          $('#waitingModal').modal('hide')
           this.state.start('Game')
         }, 3000)
       })

@@ -58,7 +58,8 @@
                 <p>Waiting for someone to join your game...</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="waitingCancelBtn">Cancel
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="waitingCancelBtn">
+                    Cancel
                 </button>
             </div>
         </div>
@@ -103,14 +104,6 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 <script>
-  var pusher = new Pusher('a2cc80fe5bb42c3481df', {
-    cluster: 'eu',
-    forceTLS: true,
-    authEndpoint: 'https://zastrahovaite.online/api/pusher/auth'
-  })
-
-  window.pusher = pusher
-
   function fetchAvailableChannels () {
     $('#noGamesText').show()
     $('#gamesTable').hide()
@@ -135,11 +128,21 @@
             ).append(
               $('<th>').append(
                 $('<button class="btn btn-primary">Join</button>').on('click', function (e) {
-                  e.preventDefault()
-
                   localStorage.setItem('channelName', channelName)
-                  const channel = pusher.subscribe(channelName)
-                  channel.trigger('client-connected', {nickname: localStorage.getItem('username')})
+                  var channel = window.pusher.subscribe(channelName)
+                  setTimeout(() => {
+                    channel.trigger('client-connected', {nickname: localStorage.getItem('username')})
+                  }, 500)
+
+                  window.enemyName = channelName.substring(8)
+
+                   $('#gamesList').modal('hide')
+                   $('#waitingModal').modal('show')
+                   $('#waitingModalBody').html('<p>The game starts in 3 seconds... Get ready!</p>')
+                   setTimeout(() => {
+                     $('#waitingModal').modal('hide')
+                     window.gameState.start('Game')
+                   }, 3000)
                 })
               )
             )
@@ -155,6 +158,13 @@
   (function ($) {
     'use strict'
     $(function () {
+      var pusher = new Pusher('a2cc80fe5bb42c3481df', {
+        cluster: 'eu',
+        forceTLS: true,
+        authEndpoint: 'https://zastrahovaite.online/api/pusher/auth'
+      })
+
+      window.pusher = pusher
 
       $('#scoreForm').modal({
         backdrop: 'static',

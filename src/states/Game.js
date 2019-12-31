@@ -22,7 +22,15 @@ export default class extends Phaser.State {
 
     this.background = this.game.add.tileSprite(0, 0, config.gameWidth, config.gameHeight, 'background')
 
-    // this.game.add.text(this.world.centerX, config.gameHeight - 20, localStorage.getItem('username'), { font: '24px Arial', fill: '#dddddd', align: 'center' })
+    this.game.add.text(10, config.gameHeight - 120, localStorage.getItem('username'), {
+      font: '34px Times New Roman',
+      fill: '#fff'
+    })
+
+    this.game.add.text(10, 80, window.enemyName, {
+      font: '34px Times New Roman',
+      fill: '#fff'
+    })
 
     this.playerLivesScale = 0.5
     this.enemyLivesScale = 0.5
@@ -99,6 +107,7 @@ export default class extends Phaser.State {
   bulletAndPlayerCollisionHandler (player, bullet) {
     bullet.kill()
 
+    //this.channel.trigger('client')
     this.playerLivesScale -= this.livesDecrement
     this.playerHealthBar.scale.set(this.playerLivesScale, 1)
 
