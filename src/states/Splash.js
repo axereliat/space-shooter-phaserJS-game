@@ -21,6 +21,7 @@ export default class extends Phaser.State {
     this.load.image('green', 'assets/images/green.jpg')
     this.load.image('leaderboardBtn', 'assets/images/leaderboardBtn.png')
     this.load.image('joinGameBtn', 'assets/images/join-game.png')
+    this.load.image('createGameBtn', 'assets/images/create-game.png')
     this.load.image('title', 'assets/images/title.png')
     this.load.image('bullet', baseUrl + 'games/invaders/bullet.png')
     this.load.image('background', baseUrl + 'games/invaders/starfield.png')

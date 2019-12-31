@@ -6,7 +6,7 @@ export default class extends Phaser.Sprite {
     this.anchor.setTo(0.5)
     this.speed = 3
 
-    const channel = window.pusher.subscribe('private-my-channel')
+    const channel = window.pusher.subscribe(localStorage.getItem('channelName'))
     channel.bind('client-ship-moved', data => {
       if (data.nickname !== localStorage.getItem('username')) {
         this.position.x = data.x

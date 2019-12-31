@@ -48,6 +48,49 @@
         </div>
     </div>
 </div>
+<div id="waitingModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Waiting Room</h5>
+            </div>
+            <div class="modal-body" id="waitingModalBody">
+                <p>Waiting for someone to join your game...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="waitingCancelBtn">Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="gamesList" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Available games</h5>
+            </div>
+            <div class="modal-body" id="gamesListModalBody">
+                <div id="gamesTable">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Game Name</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="gamesListTableBody">
+                        </tbody>
+                    </table>
+                </div>
+                <p id="noGamesText" style="display: none">No games available... You can create one :)</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://js.pusher.com/5.0/pusher.min.js"></script>
 <script
         src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -60,34 +103,81 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 <script>
+  var pusher = new Pusher('a2cc80fe5bb42c3481df', {
+    cluster: 'eu',
+    forceTLS: true,
+    authEndpoint: 'https://zastrahovaite.online/api/pusher/auth'
+  })
+
+  window.pusher = pusher
+
+  function fetchAvailableChannels () {
+    $('#noGamesText').show()
+    $('#gamesTable').hide()
+    $('#noGamesText').text('Loading...')
+    $.ajax({
+      method: 'GET',
+      url: 'https://zastrahovaite.online/api/pusher/channels',
+      success: function (res) {
+        var keys = Object.keys(res).filter(k => +res[k] === 1)
+        if (keys.length === 0) {
+          $('#noGamesText').show()
+          $('#gamesTable').hide()
+          $('#noGamesText').text('No games available... You can create one :)')
+        }
+        for (var channelName of keys) {
+          $('#noGamesText').hide()
+          $('#gamesTable').show()
+          $('#gamesListTableBody').html('')
+          $('#gamesListTableBody').append(
+            $('<tr>').append(
+              $('<th>' + channelName.substring(8) + '</th>')
+            ).append(
+              $('<th>').append(
+                $('<button class="btn btn-primary">Join</button>').on('click', function (e) {
+                  e.preventDefault()
+
+                  localStorage.setItem('channelName', channelName)
+                  const channel = pusher.subscribe(channelName)
+                  channel.trigger('client-connected', {nickname: localStorage.getItem('username')})
+                })
+              )
+            )
+          )
+        }
+      },
+      error: function (err) {
+        console.log(err)
+      }
+    })
+  }
+
   (function ($) {
     'use strict'
     $(function () {
-      var pusher = new Pusher('a2cc80fe5bb42c3481df', {
-        cluster: 'eu',
-        forceTLS: true,
-        authEndpoint: 'https://zastrahovaite.online/api/pusher/auth'
-      })
-
-      window.pusher = pusher
 
       $('#scoreForm').modal({
         backdrop: 'static',
         keyboard: false
       })
 
-      $('#username').focus();
+      $('#username').focus()
 
       const localStorageUsername = localStorage.getItem('username')
       $('#username').val(localStorageUsername ? localStorageUsername : '')
 
       $('#nicknameForm').on('submit', function (e) {
-        e.preventDefault();
+        e.preventDefault()
 
         var username = $('#username').val()
         localStorage.setItem('username', username)
 
         $('#scoreForm').modal('hide')
+      })
+
+      $('#waitingCancelBtn').on('click', function () {
+        pusher.unsubscribe(localStorage.getItem('channelName'))
+        localStorage.removeItem('channelName')
       })
     })
   })(jQuery)

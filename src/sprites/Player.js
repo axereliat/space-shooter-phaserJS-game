@@ -10,7 +10,7 @@ export default class extends Phaser.Sprite {
     this.speed = 3
     this.oldX = null
 
-    this.channel = window.pusher.subscribe('private-my-channel')
+    this.channel = window.pusher.subscribe(localStorage.getItem('channelName'))
   }
 
   update () {

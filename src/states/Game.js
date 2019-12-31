@@ -75,7 +75,7 @@ export default class extends Phaser.State {
     this.explosions = this.game.add.group()
     this.explosions.createMultiple(30, 'explosion')
 
-    this.channel = window.pusher.subscribe('private-my-channel')
+    this.channel = window.pusher.subscribe(localStorage.getItem('channelName'))
 
     this.channel.bind('client-fire-bullet', data => {
       if (data.nickname !== localStorage.getItem('username')) {

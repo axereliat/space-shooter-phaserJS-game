@@ -11,8 +11,25 @@ export default class extends Phaser.State {
     title.scale.set(0.8, 0.8)
     const authorText = this.game.add.text(this.world.centerX, config.gameHeight - 20, 'Made by Mario Markov, 2020', { font: '24px Arial', fill: '#dddddd', align: 'center' })
     authorText.anchor.setTo(0.5, 0.5)
-    this.game.add.button(this.game.world.centerX - 140, this.world.centerY, 'startBtn', () => {
-      this.state.start('Game')
+
+    this.game.add.button(this.game.world.centerX - 140, this.world.centerY, 'joinGameBtn', () => {
+      window.fetchAvailableChannels()
+      $('#gamesList').modal('show')
+    }, this, 2, 1, 0)
+
+    this.game.add.button(this.game.world.centerX - 140, this.world.centerY + 80, 'createGameBtn', () => {
+      $('#waitingModal').modal('show')
+      const channelName = 'private-' + localStorage.getItem('username')
+      const channel = window.pusher.subscribe(channelName)
+      channel.bind('client-connected', data => {
+        console.log('here ' + JSON.stringify(data))
+        $('#waitingModalBody').html('<p>' + localStorage.getItem('username') + ' joined! The game starts in 3 seconds.</p>')
+        setTimeout(() => {
+          this.state.start('Game')
+        }, 3000)
+      })
+
+      localStorage.setItem('channelName', channelName)
     }, this, 2, 1, 0)
 
     $('#scoreForm').modal('show')
