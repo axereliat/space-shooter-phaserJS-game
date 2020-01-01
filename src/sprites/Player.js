@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 import config from '../config'
 
 export default class extends Phaser.Sprite {
-  constructor ({game, x, y, asset}, multiplayer) {
+  constructor ({game, x, y, asset}) {
     super(game, x, y, asset)
     this.anchor.setTo(0.5)
     this.leftArrow = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT)

@@ -3,6 +3,8 @@ import Phaser from 'phaser'
 import Player from '../sprites/Player'
 import Enemy from '../sprites/Enemy'
 import config from '../config'
+import {AmmoService} from '../services/AmmoService'
+import {BootService} from '../services/BootService'
 
 export default class extends Phaser.State {
   constructor () {
@@ -18,6 +20,9 @@ export default class extends Phaser.State {
   create () {
     this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT
 
+    this.poweredGun = false
+
+    this.powerupAudio = this.game.add.audio('powerup')
     this.painAudio = this.game.add.audio('pain')
     this.shotAudio = this.game.add.audio('shot')
 
@@ -81,6 +86,26 @@ export default class extends Phaser.State {
     this.bullets.setAll('outOfBoundsKill', true)
     this.bullets.setAll('checkWorldBounds', true)
 
+    this.ammoBagTime = this.game.time.now + 3000
+    this.ammoBags = this.game.add.group()
+    this.ammoBags.enableBody = true
+    this.ammoBags.physicsBodyType = Phaser.Physics.ARCADE
+    this.ammoBags.createMultiple(50, 'ammo')
+    this.ammoBags.setAll('anchor.x', 0.5)
+    this.ammoBags.setAll('anchor.y', 1)
+    this.ammoBags.setAll('outOfBoundsKill', true)
+    this.ammoBags.setAll('checkWorldBounds', true)
+
+    this.bootTime = this.game.time.now + 5000
+    this.boots = this.game.add.group()
+    this.boots.enableBody = true
+    this.boots.physicsBodyType = Phaser.Physics.ARCADE
+    this.boots.createMultiple(50, 'boots')
+    this.boots.setAll('anchor.x', 0.5)
+    this.boots.setAll('anchor.y', 1)
+    this.boots.setAll('outOfBoundsKill', true)
+    this.boots.setAll('checkWorldBounds', true)
+
     this.explosions = this.game.add.group()
     this.explosions.createMultiple(30, 'explosion')
 
@@ -92,12 +117,25 @@ export default class extends Phaser.State {
         this.bullets.forEachDead(bullet => {
           bulletArr.push(bullet)
         })
-        const bullet = bulletArr[0]
-        if (bullet) {
+        const bullet1 = bulletArr[0]
+        const bullet2 = bulletArr[0]
+        const bullet3 = bulletArr[0]
+        if (bullet1) {
           this.shotAudio.play()
-          bullet.reset(this.enemy.x, this.enemy.y + 90)
-          bullet.body.velocity.y = 400
-          bullet.angle = 0
+          bullet1.reset(this.enemy.x, this.enemy.y + 90)
+          bullet1.body.velocity.y = 400
+          bullet1.angle = 0
+
+          if (data.powered) {
+            bullet2.reset(this.enemy.x, this.enemy.y + 90)
+            bullet2.body.velocity.y = 400
+            bullet2.body.velocity.x = 200
+            bullet2.angle = -20
+            bullet3.reset(this.enemy.x, this.enemy.y + 90)
+            bullet3.body.velocity.y = 400
+            bullet3.body.velocity.x = -200
+            bullet3.angle = 20
+          }
         }
       }
     })
@@ -116,6 +154,20 @@ export default class extends Phaser.State {
       alert(window.enemyName + ' left the game.')
       window.pusher.unsubscribe(localStorage.getItem('channelName'))
       this.state.start('Start', true, false)
+    })
+
+    this.channel.bind('client-ammo-initiated', data => {
+      const ammo = this.ammoBags.getFirstExists(false)
+
+      ammo.reset(data.x, this.world.centerY)
+      ammo.scale.set(0.4, 0.4)
+    })
+
+    this.channel.bind('client-boots-initiated', data => {
+      const boot = this.boots.getFirstExists(false)
+
+      boot.reset(data.x, this.world.centerY)
+      boot.scale.set(0.4, 0.4)
     })
 
     this.game.input.onDown.add(this.gofull, this)
@@ -146,6 +198,32 @@ export default class extends Phaser.State {
     this.channel.trigger('client-lives-scale-changed', {nickname: window.enemyName, livesScale: this.enemyLivesScale})
   }
 
+  bulletAndAmmoCollisionHandler (bullet, ammoBag) {
+    bullet.kill()
+    ammoBag.kill()
+
+    this.powerupAudio.play()
+
+    if (bullet.body.velocity.y < 0) {
+      this.poweredGun = true
+      setTimeout(() => {
+        this.poweredGun = false
+      }, 5000)
+    }
+  }
+
+  bulletAndBootsCollisionHandler (bullet, boot) {
+    bullet.kill()
+    boot.kill()
+
+    this.powerupAudio.play()
+
+    this.player.speed = 10
+    setTimeout(() => {
+      this.player.speed = 3
+    }, 5000)
+  }
+
   initiateExplosion (ship) {
     this.painAudio.play()
     const explosion = this.explosions.getFirstExists(false)
@@ -170,8 +248,13 @@ export default class extends Phaser.State {
       this.state.start('GameOver', true, false, {winner: 'player'})
     }
 
+    this.ammoBagTime = AmmoService.initiateAmmo(this.game, this.ammoBagTime, this.ammoBags, this.world.centerY, this.channel)
+    this.bootTime = BootService.initiateBoots(this.game, this.bootTime, this.boots, this.world.centerY, this.channel)
+
     this.game.physics.arcade.overlap(this.bullets, this.player, this.bulletAndPlayerCollisionHandler, null, this)
     this.game.physics.arcade.overlap(this.bullets, this.enemy, this.bulletAndEnemyCollisionHandler, null, this)
+    this.game.physics.arcade.overlap(this.bullets, this.ammoBags, this.bulletAndAmmoCollisionHandler, null, this)
+    this.game.physics.arcade.overlap(this.bullets, this.boots, this.bulletAndBootsCollisionHandler, null, this)
   }
 
   gofull () {
@@ -187,17 +270,30 @@ export default class extends Phaser.State {
     this.bullets.forEachDead(bullet => {
       bulletArr.push(bullet)
     })
-    const bullet = bulletArr[0]
-    if (bullet) {
+    const bullet1 = bulletArr[0]
+    const bullet2 = bulletArr[1]
+    const bullet3 = bulletArr[2]
+    if (bullet1 && bullet2 && bullet3) {
       if (this.game.time.now > this.bulletTime) {
         this.channel.trigger('client-fire-bullet', {
-          x: bullet.position.x,
-          nickname: localStorage.getItem('username')
+          x: bullet1.position.x,
+          nickname: localStorage.getItem('username'),
+          powered: this.poweredGun
         })
         this.shotAudio.play()
-        bullet.reset(this.player.x, this.player.y - 40)
-        bullet.body.velocity.y = -400
-        bullet.angle = 0
+        bullet1.reset(this.player.x, this.player.y - 40)
+        bullet1.body.velocity.y = -400
+        bullet1.angle = 0
+        if (this.poweredGun) {
+          bullet2.reset(this.player.x, this.player.y - 40)
+          bullet2.body.velocity.y = -400
+          bullet2.body.velocity.x = -200
+          bullet2.angle = -20
+          bullet3.reset(this.player.x, this.player.y - 40)
+          bullet3.body.velocity.y = -400
+          bullet3.body.velocity.x = 200
+          bullet3.angle = 20
+        }
         this.bulletTime = this.game.time.now + this.fireRate
       }
     }
