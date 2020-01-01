@@ -8,6 +8,9 @@ export default class extends Phaser.State {
   }
 
   preload () {
+    window.pusher.unsubscribe(localStorage.getItem('channelName'))
+    localStorage.removeItem('channelName')
+
     this.game.add.text(this.world.centerX - 210, this.world.centerY - 140,
       this.winner === 'player' ? 'You Win' : 'You Lose', {
         font: '110px Times New Roman',

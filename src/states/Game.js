@@ -112,6 +112,12 @@ export default class extends Phaser.State {
       }
     })
 
+    this.channel.bind('client-leave', () => {
+      alert(window.enemyName + ' left the game.')
+      window.pusher.unsubscribe(localStorage.getItem('channelName'))
+      this.state.start('Start', true, false)
+    })
+
     this.game.input.onDown.add(this.gofull, this)
   }
 

@@ -24,10 +24,13 @@ export default class extends Phaser.State {
       $('#waitingModalBody').html('<p>Waiting for someone to join your game...</p>')
       const channelName = 'private-' + localStorage.getItem('username')
       const channel = window.pusher.subscribe(channelName)
+      window.channel = channel
       channel.bind('client-connected', data => {
         window.enemyName = data.nickname
         $('#waitingModalBody').html('<p>' + data.nickname + ' joined! The game starts in 3 seconds.</p>')
+        $('#waitingCancelBtn').attr('disabled', 'true')
         setTimeout(() => {
+          $('#waitingCancelBtn').attr('disabled', 'false')
           $('#waitingModal').modal('hide')
           this.state.start('Game')
         }, 3000)

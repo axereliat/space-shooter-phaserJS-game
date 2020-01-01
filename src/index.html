@@ -124,6 +124,17 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 <script>
+  window.onbeforeunload = function () {
+    var channelName = localStorage.getItem('channelName')
+    if (channelName !== null) {
+      window.channel.trigger('client-leave', {nickname: localStorage.getItem('username')})
+      localStorage.removeItem('channelName')
+
+      return 'Are you sure you want to leave?'
+    }
+    return null
+  }
+
   function fetchAvailableChannels () {
     $('#noGamesText').show()
     $('#gamesTable').hide()
@@ -159,19 +170,22 @@
                   }
                   localStorage.setItem('channelName', channelName)
                   var channel = window.pusher.subscribe(channelName)
+                  window.channel = channel
                   channel.bind('pusher:subscription_succeeded', () => {
                     channel.trigger('client-connected', {nickname: localStorage.getItem('username')})
                   })
 
                   window.enemyName = channelName.substring(8)
 
-                   $('#gamesList').modal('hide')
-                   $('#waitingModal').modal('show')
-                   $('#waitingModalBody').html('<p>The game starts in 3 seconds... Get ready!</p>')
-                   setTimeout(() => {
-                     $('#waitingModal').modal('hide')
-                     window.gameState.start('Game')
-                   }, 3000)
+                  $('#gamesList').modal('hide')
+                  $('#waitingModal').modal('show')
+                  $('#waitingModalBody').html('<p>The game starts in 3 seconds... Get ready!</p>')
+                  $('#waitingCancelBtn').attr('disabled', 'true')
+                  setTimeout(() => {
+                    $('#waitingCancelBtn').attr('disabled', 'false')
+                    $('#waitingModal').modal('hide')
+                    window.gameState.start('Game')
+                  }, 3000)
                 })
               )
             )
@@ -199,6 +213,29 @@
         backdrop: 'static',
         keyboard: false
       })
+
+      $('#gamesList').modal({
+        backdrop: 'static',
+        keyboard: false
+      })
+
+      $('#waitingModal').modal({
+        backdrop: 'static',
+        keyboard: false
+      })
+
+      $('#changeNicknameModal').modal({
+        backdrop: 'static',
+        keyboard: false
+      })
+
+      $('#scoreForm').modal('show')
+
+      $('#gamesList').modal('hide')
+
+      $('#waitingModal').modal('hide')
+
+      $('#changeNicknameModal').modal('hide')
 
       $('#username').focus()
 
