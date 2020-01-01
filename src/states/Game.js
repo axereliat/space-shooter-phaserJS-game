@@ -156,6 +156,14 @@ export default class extends Phaser.State {
       this.fireBullet()
     }
 
+    if (this.playerLivesScale <= 0.05) {
+      this.state.start('GameOver', true, false, {winner: 'enemy'})
+    }
+
+    if (this.enemyLivesScale <= 0.05) {
+      this.state.start('GameOver', true, false, {winner: 'player'})
+    }
+
     this.game.physics.arcade.overlap(this.bullets, this.player, this.bulletAndPlayerCollisionHandler, null, this)
     this.game.physics.arcade.overlap(this.bullets, this.enemy, this.bulletAndEnemyCollisionHandler, null, this)
   }
