@@ -5,7 +5,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/states/Game.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/states/Game.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/states/Start.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/states/Start.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -100,7 +99,7 @@
       <workItem from="1577519867834" duration="277000" />
       <workItem from="1577520312810" duration="23064000" />
       <workItem from="1577688306812" duration="21588000" />
-      <workItem from="1577771164765" duration="12195000" />
+      <workItem from="1577771164765" duration="16462000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1542620906214</created>

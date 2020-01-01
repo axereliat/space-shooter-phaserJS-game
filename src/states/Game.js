@@ -8,6 +8,7 @@ export default class extends Phaser.State {
   constructor () {
     super()
   }
+
   init () {
   }
 
@@ -35,11 +36,11 @@ export default class extends Phaser.State {
     this.playerLivesScale = 0.5
     this.enemyLivesScale = 0.5
 
-    this.playerHealthBar = this.game.add.image(0, config.gameHeight - 20,'green')
+    this.playerHealthBar = this.game.add.image(0, config.gameHeight - 20, 'green')
     this.playerHealthBar.scale.set(this.playerLivesScale, 1)
     this.playerHealthBar.bringToTop()
 
-    this.enemyHealthBar = this.game.add.image(0, -config.gameHeight - 460,'green')
+    this.enemyHealthBar = this.game.add.image(0, -config.gameHeight - 460, 'green')
     this.enemyHealthBar.scale.set(this.enemyLivesScale, 1)
     this.enemyHealthBar.bringToTop()
 
@@ -101,29 +102,45 @@ export default class extends Phaser.State {
       }
     })
 
+    this.channel.bind('client-lives-scale-changed', data => {
+      if (data.nickname === localStorage.getItem('username')) {
+        this.playerLivesScale = data.livesScale
+        this.playerHealthBar.scale.set(this.playerLivesScale, 1)
+      } else {
+        this.enemyLivesScale = data.livesScale
+        this.enemyHealthBar.scale.set(this.enemyLivesScale, 1)
+      }
+    })
+
     this.game.input.onDown.add(this.gofull, this)
   }
 
   bulletAndPlayerCollisionHandler (player, bullet) {
     bullet.kill()
 
-    //this.channel.trigger('client')
     this.playerLivesScale -= this.livesDecrement
     this.playerHealthBar.scale.set(this.playerLivesScale, 1)
 
     this.initiateExplosion(player)
+
+    this.channel.trigger('client-lives-scale-changed', {
+      nickname: localStorage.getItem('username'),
+      livesScale: this.playerLivesScale
+    })
   }
 
   bulletAndEnemyCollisionHandler (enemy, bullet) {
     bullet.kill()
 
-    this.enemyLivesScale -= this.livesDecrement;
+    this.enemyLivesScale -= this.livesDecrement
     this.enemyHealthBar.scale.set(this.enemyLivesScale, 1)
 
     this.initiateExplosion(enemy)
+
+    this.channel.trigger('client-lives-scale-changed', {nickname: window.enemyName, livesScale: this.enemyLivesScale})
   }
 
-  initiateExplosion(ship) {
+  initiateExplosion (ship) {
     this.painAudio.play()
     const explosion = this.explosions.getFirstExists(false)
     explosion.scale.set(1.2, 1.2)

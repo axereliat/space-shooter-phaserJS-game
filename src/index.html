@@ -48,6 +48,26 @@
         </div>
     </div>
 </div>
+<div id="changeNicknameModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeNicknameText"></h5>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <form id="changeNicknameForm">
+                        <label for="usernameToChange">Nickname</label>
+                        <input type="text" name="username" class="form-control" id="usernameToChange"
+                               placeholder="Enter your nickname" required maxlength="10" autofocus>
+                        <br/>
+                        <button id="nicknameChangeBtn" type="submit" class="btn btn-primary">Change</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="waitingModal" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -128,11 +148,20 @@
             ).append(
               $('<th>').append(
                 $('<button class="btn btn-primary">Join</button>').on('click', function (e) {
+                  var playerNickname = localStorage.getItem('username')
+                  if (playerNickname === channelName.substring(8)) {
+                    $('#gamesList').modal('hide')
+                    $('#changeNicknameModal').modal('show')
+                    $('#usernameToChange').focus()
+                    $('#changeNicknameText').text('Nickname ' + playerNickname + ' is already taken. Please change your nickname')
+
+                    return
+                  }
                   localStorage.setItem('channelName', channelName)
                   var channel = window.pusher.subscribe(channelName)
-                  setTimeout(() => {
+                  channel.bind('pusher:subscription_succeeded', () => {
                     channel.trigger('client-connected', {nickname: localStorage.getItem('username')})
-                  }, 500)
+                  })
 
                   window.enemyName = channelName.substring(8)
 
@@ -173,8 +202,17 @@
 
       $('#username').focus()
 
-      const localStorageUsername = localStorage.getItem('username')
+      var localStorageUsername = localStorage.getItem('username')
       $('#username').val(localStorageUsername ? localStorageUsername : '')
+
+      $('#changeNicknameForm').on('submit', function (e) {
+        e.preventDefault()
+
+        var username = $('#usernameToChange').val()
+        localStorage.setItem('username', username)
+
+        $('#changeNicknameModal').modal('hide')
+      })
 
       $('#nicknameForm').on('submit', function (e) {
         e.preventDefault()
