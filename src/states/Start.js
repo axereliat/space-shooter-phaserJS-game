@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import config from '../config'
+import uuidv1 from 'uuid/v1'
 
 export default class extends Phaser.State {
   init () {
@@ -22,7 +23,7 @@ export default class extends Phaser.State {
     this.game.add.button(this.game.world.centerX - 140, this.world.centerY + 80, 'createGameBtn', () => {
       $('#waitingModal').modal('show')
       $('#waitingModalBody').html('<p>Waiting for someone to join your game...</p>')
-      const channelName = 'private-' + localStorage.getItem('username')
+      const channelName = 'private-' + localStorage.getItem('username') + '-' + uuidv1()
       const channel = window.pusher.subscribe(channelName)
       window.channel = channel
       channel.bind('client-connected', data => {
@@ -30,7 +31,7 @@ export default class extends Phaser.State {
         $('#waitingModalBody').html('<p>' + data.nickname + ' joined! The game starts in 3 seconds.</p>')
         $('#waitingCancelBtn').attr('disabled', 'true')
         setTimeout(() => {
-          $('#waitingCancelBtn').attr('disabled', 'false')
+          $('#waitingCancelBtn').removeAttr('disabled')
           $('#waitingModal').modal('hide')
           this.state.start('Game')
         }, 3000)

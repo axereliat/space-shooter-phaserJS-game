@@ -118,9 +118,9 @@ export default class extends Phaser.State {
           bulletArr.push(bullet)
         })
         const bullet1 = bulletArr[0]
-        const bullet2 = bulletArr[0]
-        const bullet3 = bulletArr[0]
-        if (bullet1) {
+        const bullet2 = bulletArr[1]
+        const bullet3 = bulletArr[2]
+        if (bullet1 && bullet2 && bullet3) {
           this.shotAudio.play()
           bullet1.reset(this.enemy.x, this.enemy.y + 90)
           bullet1.body.velocity.y = 400
@@ -152,7 +152,9 @@ export default class extends Phaser.State {
 
     this.channel.bind('client-leave', () => {
       alert(window.enemyName + ' left the game.')
-      window.pusher.unsubscribe(localStorage.getItem('channelName'))
+      const channelName = localStorage.getItem('channelName')
+      window.pusher.unsubscribe(channelName)
+      localStorage.removeItem(channelName)
       this.state.start('Start', true, false)
     })
 

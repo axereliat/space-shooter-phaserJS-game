@@ -150,12 +150,14 @@
           $('#noGamesText').text('No games available... You can create one :)')
         }
         for (var channelName of keys) {
+          var enemyName = channelName.split('-')[1]
+
           $('#noGamesText').hide()
           $('#gamesTable').show()
           $('#gamesListTableBody').html('')
           $('#gamesListTableBody').append(
             $('<tr>').append(
-              $('<th>' + channelName.substring(8) + '</th>')
+              $('<th>' + enemyName + '</th>')
             ).append(
               $('<th>').append(
                 $('<button class="btn btn-primary">Join</button>').on('click', function (e) {
@@ -175,7 +177,7 @@
                     channel.trigger('client-connected', {nickname: localStorage.getItem('username')})
                   })
 
-                  window.enemyName = channelName.substring(8)
+                  window.enemyName = enemyName
 
                   $('#gamesList').modal('hide')
                   $('#waitingModal').modal('show')
@@ -246,16 +248,24 @@
         e.preventDefault()
 
         var username = $('#usernameToChange').val()
+
         localStorage.setItem('username', username)
 
         $('#changeNicknameModal').modal('hide')
         $('#gamesList').modal('show')
       })
 
+      $('#username,#usernameToChange').on('keypress', function (e) {
+        if(+e.keyCode === 32 || +e.keyCode === 45) {
+          return false
+        }
+      });
+
       $('#nicknameForm').on('submit', function (e) {
         e.preventDefault()
 
         var username = $('#username').val()
+
         localStorage.setItem('username', username)
 
         $('#scoreForm').modal('hide')
