@@ -92,6 +92,7 @@
                 <h5 class="modal-title">Available games</h5>
             </div>
             <div class="modal-body" id="gamesListModalBody">
+                <button class="btn btn-warning" id="reloadBtn">Reload</button>
                 <div id="gamesTable">
                     <table class="table">
                         <thead>
@@ -243,6 +244,12 @@
 
       var localStorageUsername = localStorage.getItem('username')
       $('#username').val(localStorageUsername ? localStorageUsername : '')
+
+      $('#reloadBtn').on('click', function (e) {
+        e.preventDefault()
+
+        window.fetchAvailableChannels()
+      })
 
       $('#changeNicknameForm').on('submit', function (e) {
         e.preventDefault()
