@@ -4,7 +4,7 @@ import Player from '../sprites/Player'
 import Enemy from '../sprites/Enemy'
 import config from '../config'
 import {AmmoService} from '../services/AmmoService'
-import {BootService} from '../services/BootService'
+import {MedicineService} from '../services/MedicineService'
 
 export default class extends Phaser.State {
   constructor () {
@@ -21,6 +21,8 @@ export default class extends Phaser.State {
     this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT
 
     this.poweredGun = false
+
+    window.powerUpsCount = 0
 
     this.powerupAudio = this.game.add.audio('powerup')
     this.painAudio = this.game.add.audio('pain')
@@ -96,15 +98,15 @@ export default class extends Phaser.State {
     this.ammoBags.setAll('outOfBoundsKill', true)
     this.ammoBags.setAll('checkWorldBounds', true)
 
-    this.bootTime = this.game.time.now + 5000
-    this.boots = this.game.add.group()
-    this.boots.enableBody = true
-    this.boots.physicsBodyType = Phaser.Physics.ARCADE
-    this.boots.createMultiple(50, 'boots')
-    this.boots.setAll('anchor.x', 0.5)
-    this.boots.setAll('anchor.y', 1)
-    this.boots.setAll('outOfBoundsKill', true)
-    this.boots.setAll('checkWorldBounds', true)
+    this.medicineTime = this.game.time.now + 5000
+    this.medicines = this.game.add.group()
+    this.medicines.enableBody = true
+    this.medicines.physicsBodyType = Phaser.Physics.ARCADE
+    this.medicines.createMultiple(50, 'medicine')
+    this.medicines.setAll('anchor.x', 0.5)
+    this.medicines.setAll('anchor.y', 1)
+    this.medicines.setAll('outOfBoundsKill', true)
+    this.medicines.setAll('checkWorldBounds', true)
 
     this.explosions = this.game.add.group()
     this.explosions.createMultiple(30, 'explosion')
@@ -163,13 +165,17 @@ export default class extends Phaser.State {
 
       ammo.reset(data.x, this.world.centerY)
       ammo.scale.set(0.4, 0.4)
+
+      window.powerUpsCount++
     })
 
-    this.channel.bind('client-boots-initiated', data => {
-      const boot = this.boots.getFirstExists(false)
+    this.channel.bind('client-medicine-initiated', data => {
+      const medicine = this.medicines.getFirstExists(false)
 
-      boot.reset(data.x, this.world.centerY)
-      boot.scale.set(0.4, 0.4)
+      medicine.reset(data.x, this.world.centerY)
+      medicine.scale.set(0.4, 0.4)
+
+      window.powerUpsCount++
     })
 
     this.game.input.onDown.add(this.gofull, this)
@@ -204,6 +210,8 @@ export default class extends Phaser.State {
     bullet.kill()
     ammoBag.kill()
 
+    window.powerUpsCount--
+
     this.powerupAudio.play()
 
     if (bullet.body.velocity.y < 0) {
@@ -214,16 +222,22 @@ export default class extends Phaser.State {
     }
   }
 
-  bulletAndBootsCollisionHandler (bullet, boot) {
+  bulletAndMedicineCollisionHandler (bullet, medicine) {
     bullet.kill()
-    boot.kill()
+    medicine.kill()
+
+    window.powerUpsCount--
 
     this.powerupAudio.play()
 
-    this.player.speed = 10
-    setTimeout(() => {
-      this.player.speed = 3
-    }, 5000)
+    this.playerLivesScale += 0.1
+    if (this.playerLivesScale > 0.5) {
+      this.playerLivesScale = 0.5
+    }
+    this.channel.trigger('client-lives-scale-changed', {
+      nickname: localStorage.getItem('username'),
+      livesScale: this.playerLivesScale
+    })
   }
 
   initiateExplosion (ship) {
@@ -238,6 +252,7 @@ export default class extends Phaser.State {
   }
 
   update () {
+    console.log(window.powerUpsCount)
     if (this.fireButton.isDown) {
       this.fireBullet()
     }
@@ -250,13 +265,15 @@ export default class extends Phaser.State {
       this.state.start('GameOver', true, false, {winner: 'player'})
     }
 
-    this.ammoBagTime = AmmoService.initiateAmmo(this.game, this.ammoBagTime, this.ammoBags, this.world.centerY, this.channel)
-    this.bootTime = BootService.initiateBoots(this.game, this.bootTime, this.boots, this.world.centerY, this.channel)
+    this.ammoBagTime = AmmoService.initiateAmmo(this.game, this.ammoBagTime, this.ammoBags, this.world.centerY,
+      this.channel)
+    this.medicineTime = MedicineService.initiateMedicine(this.game, this.medicineTime, this.medicines, this.world.centerY,
+      this.channel)
 
     this.game.physics.arcade.overlap(this.bullets, this.player, this.bulletAndPlayerCollisionHandler, null, this)
     this.game.physics.arcade.overlap(this.bullets, this.enemy, this.bulletAndEnemyCollisionHandler, null, this)
     this.game.physics.arcade.overlap(this.bullets, this.ammoBags, this.bulletAndAmmoCollisionHandler, null, this)
-    this.game.physics.arcade.overlap(this.bullets, this.boots, this.bulletAndBootsCollisionHandler, null, this)
+    this.game.physics.arcade.overlap(this.bullets, this.medicines, this.bulletAndMedicineCollisionHandler, null, this)
   }
 
   gofull () {

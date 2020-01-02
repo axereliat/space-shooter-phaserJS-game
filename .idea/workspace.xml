@@ -2,13 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="85d84a93-b3b3-471f-b8c2-ea4b93492644" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.firebase/hosting.YnVpbGQ.cache" beforeDir="false" afterPath="$PROJECT_DIR$/.firebase/hosting.YnVpbGQ.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/medical-bag.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/medical-bag.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/speedy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/AmmoService.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/AmmoService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/BootService.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/MedicineService.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/states/Game.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/states/Game.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/states/Start.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/states/Start.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/states/Splash.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/states/Splash.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -103,7 +103,7 @@
       <workItem from="1577519867834" duration="277000" />
       <workItem from="1577520312810" duration="23064000" />
       <workItem from="1577688306812" duration="21588000" />
-      <workItem from="1577771164765" duration="35497000" />
+      <workItem from="1577771164765" duration="40419000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1542620906214</created>

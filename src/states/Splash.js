@@ -28,7 +28,6 @@ export default class extends Phaser.State {
     this.load.image('background', baseUrl + 'games/invaders/starfield.png')
     this.load.image('asteroid', 'assets/images/asteroid.png')
     this.load.image('medicine', 'assets/images/medical-bag.png')
-    this.load.image('boots', 'assets/images/speedy.png')
     this.load.image('ammo', 'assets/images/ammo.png')
     this.load.audio('shot', 'assets/audio/shot.wav')
     this.load.audio('destroy', 'assets/audio/destroy.wav')
