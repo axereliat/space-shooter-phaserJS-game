@@ -234,6 +234,8 @@ export default class extends Phaser.State {
     if (this.playerLivesScale > 0.5) {
       this.playerLivesScale = 0.5
     }
+    this.playerHealthBar.scale.set(this.playerLivesScale, 1)
+    
     this.channel.trigger('client-lives-scale-changed', {
       nickname: localStorage.getItem('username'),
       livesScale: this.playerLivesScale
@@ -252,7 +254,6 @@ export default class extends Phaser.State {
   }
 
   update () {
-    console.log(window.powerUpsCount)
     if (this.fireButton.isDown) {
       this.fireBullet()
     }

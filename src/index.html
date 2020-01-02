@@ -182,13 +182,22 @@
 
                   $('#gamesList').modal('hide')
                   $('#waitingModal').modal('show')
-                  $('#waitingModalBody').html('<p>The game starts in 3 seconds... Get ready!</p>')
+
+                  var seconds = 6
+                  $('#waitingModalBody').html('<div>The game starts in <br/><h1 class="text-center"><strong>' + seconds + '</strong></h1></div>')
                   $('#waitingCancelBtn').attr('disabled', 'true')
-                  setTimeout(() => {
-                    $('#waitingCancelBtn').attr('disabled', 'false')
-                    $('#waitingModal').modal('hide')
-                    window.gameState.start('Game')
-                  }, 3000)
+
+                  var intervalSecs = setInterval(function () {
+                    seconds--
+                    $('#waitingModalBody').html('<div>The game starts in <br/><h1 class="text-center"><strong>' + seconds + '</strong></h1></div>')
+                    console.log(seconds)
+                    if (seconds <= 0) {
+                      clearInterval(intervalSecs)
+                      $('#waitingCancelBtn').removeAttr('disabled')
+                      $('#waitingModal').modal('hide')
+                      window.gameState.start('Game')
+                    }
+                  }, 1000)
                 })
               )
             )
@@ -263,10 +272,10 @@
       })
 
       $('#username,#usernameToChange').on('keypress', function (e) {
-        if(+e.keyCode === 32 || +e.keyCode === 45) {
+        if (+e.keyCode === 32 || +e.keyCode === 45) {
           return false
         }
-      });
+      })
 
       $('#nicknameForm').on('submit', function (e) {
         e.preventDefault()
