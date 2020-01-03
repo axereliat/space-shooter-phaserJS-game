@@ -32,7 +32,7 @@ export default class extends Phaser.State {
       window.channel = channel
       channel.bind('client-connected', data => {
         window.enemyName = data.nickname
-        let seconds = 6
+        let seconds = 4
         $('#waitingModalBody').html('<div>' + data.nickname + ' joined! The game starts in <br/><h1 class="text-center"><strong>' + seconds + '</strong></h1></div>')
         $('#waitingCancelBtn').attr('disabled', 'true')
         const intervalSecs = setInterval(() => {
