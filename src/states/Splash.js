@@ -14,8 +14,9 @@ export default class extends Phaser.State {
     // load your assets
     //
     const baseUrl = 'http://examples.phaser.io/assets/'
-    this.load.image('player', 'assets/images/spaceship.png')
-    this.load.image('enemy', 'assets/images/spaceship-enemy.png')
+    this.load.image('ship1', 'assets/images/spaceship.png')
+    this.load.image('ship2', 'assets/images/spaceship-enemy.png')
+    this.load.image('ship3', 'assets/images/ship3.png')
     this.load.spritesheet('explosion', baseUrl + 'games/invaders/explode.png', 128, 128)
     this.load.image('retryBtn', 'assets/images/retry-btn.png')
     this.load.image('green', 'assets/images/green.jpg')

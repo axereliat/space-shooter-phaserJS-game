@@ -9,6 +9,7 @@ import StartState from './states/Start'
 import GameOver from './states/GameOver'
 
 import config from './config'
+import ChooseShip from './states/ChooseShip'
 
 class Game extends Phaser.Game {
   constructor () {
@@ -23,6 +24,7 @@ class Game extends Phaser.Game {
     this.state.add('Game', GameState, false)
     this.state.add('Start', StartState, false)
     this.state.add('GameOver', GameOver, false)
+    this.state.add('ChooseShip', ChooseShip, false)
 
     // with Cordova with need to wait that the device is ready so we will call the Boot state in another file
     if (!window.cordova) {

@@ -11,7 +11,11 @@ export default class extends Phaser.State {
     super()
   }
 
-  init () {
+  init (payload) {
+    this.playerShip = payload.playerShip
+    this.enemyShip = payload.enemyShip
+
+    this.stage.backgroundColor = '#000000'
   }
 
   preload () {
@@ -57,13 +61,13 @@ export default class extends Phaser.State {
       game: this.game,
       x: this.world.centerX,
       y: this.world.bounds.bottom - 60,
-      asset: 'player'
+      asset: this.playerShip
     }, true)
     this.enemy = new Enemy({
       game: this.game,
       x: this.world.centerX + 30,
       y: this.world.bounds.top + 60,
-      asset: 'enemy'
+      asset: this.enemyShip
     })
     this.game.physics.arcade.enable(this.player)
     this.player.physicsType = Phaser.Physics.ARCADE
@@ -235,7 +239,7 @@ export default class extends Phaser.State {
       this.playerLivesScale = 0.5
     }
     this.playerHealthBar.scale.set(this.playerLivesScale, 1)
-    
+
     this.channel.trigger('client-lives-scale-changed', {
       nickname: localStorage.getItem('username'),
       livesScale: this.playerLivesScale

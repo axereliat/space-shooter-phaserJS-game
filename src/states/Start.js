@@ -42,7 +42,7 @@ export default class extends Phaser.State {
             clearInterval(intervalSecs)
             $('#waitingCancelBtn').removeAttr('disabled')
             $('#waitingModal').modal('hide')
-            this.state.start('Game')
+            this.state.start('ChooseShip')
           }
         }, 1000)
       })
