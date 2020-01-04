@@ -163,7 +163,7 @@
               $('<th>').append(
                 $('<button class="btn btn-primary">Join</button>').on('click', function (e) {
                   var playerNickname = localStorage.getItem('username')
-                  if (playerNickname === channelName.substring(8)) {
+                  if (playerNickname === enemyName) {
                     $('#gamesList').modal('hide')
                     $('#changeNicknameModal').modal('show')
                     $('#usernameToChange').focus()

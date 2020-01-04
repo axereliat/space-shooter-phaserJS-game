@@ -13,7 +13,7 @@ export class AmmoService {
       ammo.reset(posX, centerY)
       ammo.scale.set(0.4, 0.4)
 
-      channel.trigger('client-ammo-initiated', {x: posX})
+      channel.trigger('client-ammo-initiated', {x: posX, id: ammo.id})
 
       return game.time.now + game.rnd.integerInRange(minTime, maxTime)
     }

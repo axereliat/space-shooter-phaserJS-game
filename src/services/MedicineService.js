@@ -13,7 +13,7 @@ export class MedicineService {
       medicine.reset(posX, centerY)
       medicine.scale.set(0.4, 0.4)
 
-      channel.trigger('client-medicine-initiated', {x: posX})
+      channel.trigger('client-medicine-initiated', {x: posX, id: medicine.id})
 
       return game.time.now + game.rnd.integerInRange(minTime, maxTime)
     }

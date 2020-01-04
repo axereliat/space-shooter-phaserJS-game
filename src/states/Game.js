@@ -5,6 +5,7 @@ import Enemy from '../sprites/Enemy'
 import config from '../config'
 import {AmmoService} from '../services/AmmoService'
 import {MedicineService} from '../services/MedicineService'
+import uuidv1 from 'uuid/v1'
 
 export default class extends Phaser.State {
   constructor () {
@@ -91,6 +92,9 @@ export default class extends Phaser.State {
     this.bullets.setAll('anchor.y', 1)
     this.bullets.setAll('outOfBoundsKill', true)
     this.bullets.setAll('checkWorldBounds', true)
+    this.bullets.forEach(b => {
+      b.id = uuidv1()
+    })
 
     this.ammoBagTime = this.game.time.now + 3000
     this.ammoBags = this.game.add.group()
@@ -101,6 +105,9 @@ export default class extends Phaser.State {
     this.ammoBags.setAll('anchor.y', 1)
     this.ammoBags.setAll('outOfBoundsKill', true)
     this.ammoBags.setAll('checkWorldBounds', true)
+    this.ammoBags.forEach(a => {
+      a.id = uuidv1()
+    })
 
     this.medicineTime = this.game.time.now + 5000
     this.medicines = this.game.add.group()
@@ -111,6 +118,9 @@ export default class extends Phaser.State {
     this.medicines.setAll('anchor.y', 1)
     this.medicines.setAll('outOfBoundsKill', true)
     this.medicines.setAll('checkWorldBounds', true)
+    this.medicines.forEach(m => {
+      m.id = uuidv1()
+    })
 
     this.explosions = this.game.add.group()
     this.explosions.createMultiple(30, 'explosion')
@@ -166,6 +176,7 @@ export default class extends Phaser.State {
 
     this.channel.bind('client-ammo-initiated', data => {
       const ammo = this.ammoBags.getFirstExists(false)
+      ammo.id = data.id
 
       ammo.reset(data.x, this.world.centerY)
       ammo.scale.set(0.4, 0.4)
@@ -175,11 +186,47 @@ export default class extends Phaser.State {
 
     this.channel.bind('client-medicine-initiated', data => {
       const medicine = this.medicines.getFirstExists(false)
+      medicine.id = data.id
 
       medicine.reset(data.x, this.world.centerY)
       medicine.scale.set(0.4, 0.4)
 
       window.powerUpsCount++
+    })
+
+    this.channel.bind('client-powerup-destroyed', data => {
+      if (data.type === 'ammo') {
+        let theAmmo = null
+        this.ammoBags.forEach(ammo => {
+          if (ammo.id === data.id) {
+            theAmmo = ammo
+          }
+        })
+        if (theAmmo !== null) {
+          theAmmo.kill()
+        }
+      }
+      if (data.type === 'medicine') {
+        let theMedicine = null
+        this.medicines.forEach(medicine => {
+          if (medicine.id === data.id) {
+            theMedicine = medicine
+          }
+        })
+        if (theMedicine !== null) {
+          theMedicine.kill()
+        }
+      }
+      let theBullet = null
+      this.bullets.forEach(bullet => {
+        if (bullet.id === data.bulletId) {
+          theBullet = bullet
+        }
+      })
+      if (theBullet !== null) {
+        theBullet.kill()
+      }
+      this.powerupAudio.play()
     })
 
     this.game.input.onDown.add(this.gofull, this)
@@ -214,6 +261,8 @@ export default class extends Phaser.State {
     bullet.kill()
     ammoBag.kill()
 
+    this.channel.trigger('client-powerup-destroyed', {type: 'ammo', id: ammoBag.id, bulletId: bullet.id})
+
     window.powerUpsCount--
 
     this.powerupAudio.play()
@@ -229,6 +278,8 @@ export default class extends Phaser.State {
   bulletAndMedicineCollisionHandler (bullet, medicine) {
     bullet.kill()
     medicine.kill()
+
+    this.channel.trigger('client-powerup-destroyed', {type: 'medicine', id: medicine.id, bulletId: bullet.id})
 
     window.powerUpsCount--
 
